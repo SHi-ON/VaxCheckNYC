@@ -1,4 +1,6 @@
+import glob
 import json
+import pickle
 import smtplib
 import time
 import webbrowser
@@ -8,11 +10,25 @@ from urllib.request import urlopen
 
 import config
 
-# Javits Center both Pfizer and J&J
 PROVIDER_IDS = [1000, 1019]
 URL = 'https://am-i-eligible.covid19vaccine.health.ny.gov/api/list-providers'
 URL_PRESCREENER = 'https://am-i-eligible.covid19vaccine.health.ny.gov/Public' \
                   '/prescreener '
+DEBUG = True
+PICKLED_PATH = 'providers*.pkl'
+
+
+def pickle_response(response):
+    with open(PICKLED_PATH, 'wb') as handle:
+        pickle.dump(response, handle, pickle.DEFAULT_PROTOCOL)
+
+
+def unpickle_response():
+    paths = glob.glob(PICKLED_PATH)
+    path = paths[0]
+    with open(path, 'rb') as handle:
+        response = pickle.load(handle)
+    return response
 
 
 def send_email(provider_name, vaccine_brand):
@@ -34,6 +50,8 @@ def check(provider_ids):
     response_json = json.load(response)
 
     providers = response_json['providerList']
+    if DEBUG:
+        pickle_response(providers)
     for provider in providers:
         if provider['providerId'] in provider_ids:
             available_apts = provider['availableAppointments']
