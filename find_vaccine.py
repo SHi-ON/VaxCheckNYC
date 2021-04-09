@@ -1,9 +1,8 @@
-import sched
 import smtplib
 import time
+import webbrowser
 from datetime import datetime
 from email.message import EmailMessage
-import webbrowser
 
 import requests
 
@@ -53,6 +52,3 @@ if __name__ == '__main__':
     while True:
         time.sleep(3)
         check(PROVIDER_IDS)
-
-
-
