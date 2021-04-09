@@ -10,7 +10,8 @@ import requests
 import config
 
 URL = 'https://am-i-eligible.covid19vaccine.health.ny.gov/api/list-providers'
-
+URL_PRESCREENER = 'https://am-i-eligible.covid19vaccine.health.ny.gov/Public' \
+                  '/prescreener '
 
 # Javits Center both Pfizer and J&J
 PROVIDER_IDS = [1000, 1019]
@@ -40,6 +41,7 @@ def check(provider_ids):
             if available_apts not in ['NAC', 'N']:
                 now = datetime.now().strftime('%B %d, %Y %H:%M:%S')
                 print('Appointments available!', now)
+                webbrowser.open(URL_PRESCREENER)
                 send_email(provider['providerName'], provider['vaccineBrand'])
             else:
                 print('No appointments at {} - {} '.format(
