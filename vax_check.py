@@ -7,8 +7,7 @@ import webbrowser
 from datetime import datetime
 from email.message import EmailMessage
 from urllib.request import urlopen
-
-import config
+from configparser import ConfigParser
 
 PROVIDER_IDS = [1000, 1019]
 URL = 'https://am-i-eligible.covid19vaccine.health.ny.gov/api/list-providers'
@@ -31,21 +30,26 @@ def unpickle_response():
     return response
 
 
-def send_email(provider_name, vaccine_brand):
+def send_email(email, password, provider_name, vaccine_brand):
     msg = EmailMessage()
     msg['Subject'] = 'Vax appointment available at {} - {}'.format(
         provider_name,
         vaccine_brand)
     msg['From'] = 'VaxCheckNYC'
-    msg['To'] = config.gmail
+    msg['To'] = email
     s = smtplib.SMTP('smtp.gmail.com', 587)
     s.starttls()
-    s.login(config.gmail, config.password)
+    s.login(email, password)
     s.send_message(msg)
     s.quit()
 
 
 def check(provider_ids):
+    parser = ConfigParser()
+    parser.read('secrets.env')
+    email = parser.get('gmail', 'gmail_email')
+    password = parser.get('gmail', 'gmail_password')
+
     response = urlopen(URL)
     response_json = json.load(response)
 
@@ -59,7 +63,10 @@ def check(provider_ids):
                 now = datetime.now().strftime('%B %d, %Y %H:%M:%S')
                 print('Appointments available!', now)
                 webbrowser.open(URL_PRESCREENER)
-                send_email(provider['providerName'], provider['vaccineBrand'])
+                send_email(email,
+                           password,
+                           provider['providerName'],
+                           provider['vaccineBrand'])
             else:
                 print('No appointments at {} - {} '.format(
                     provider['providerName'],
@@ -67,6 +74,7 @@ def check(provider_ids):
 
 
 if __name__ == '__main__':
+
     while True:
         time.sleep(3)
         check(PROVIDER_IDS)
