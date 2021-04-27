@@ -1,16 +1,20 @@
-### VAX Check NYC 
-Check COVID-19 vaccine appointments availability and notifies 
-the user by sending email. Change `PROVIDER_IDS` in `vax_check.py` to your 
-desired vaccine center ID according to the provided table below.
+## VAX Check NYC 
+Check COVID-19 vaccine appointments availability and notifies the user by sending email.
+The script runs every 3 seconds and request the website of state-run vaccination centers in NY.
 
+### Usage
+Change `PROVIDER_IDS` in `vax_check.py` to your 
+desired vaccine center ID according to the provided table below. Run the 
+script `python vax_check.py` and enjoy the automation!
 
 #### Send Email
 You need to create a file `secrets.env` similar to the provided example 
 having your email credentials.
 
 
-#### Providers IDs
-List of vaccine centers and their corresponding IDs **as of April 9, 2021**:
+### Providers IDs
+List of vaccine centers and their corresponding IDs **as of April 9, 2021** 
+(subject to change):
 
 | Provider Name | Provider ID |
 | ------------- | ----------- | 
